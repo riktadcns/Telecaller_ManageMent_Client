@@ -1,0 +1,56 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom,  rgb(147, 233, 204),#2980b9);
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    margin: 20px 0; /* Add more space around h1 elements */
+    color: #333; /* Dark text color */
+}
+
+form {
+    margin: 10px 0;
+    background: linear-gradient(to bottom,  rgb(147, 233, 204),#2980b9);
+    padding: 20px; /* Add some padding to the form */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+}
+
+label {
+    display: block;
+    margin-bottom: 10px; /* More space between labels */
+}
+
+input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc; /* Add a border */
+    border-radius: 5px; /* Rounded corners */
+    background-color: #fff; /* White background for select */
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #0074D9;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px; /* Rounded corners */
+}
+
+button:hover {
+    background-color: #0056A3;
+}
+
+#message {
+    margin: 10px 0;
+    font-weight: bold;
+    color: #FF5733; /* Red text color */
+}

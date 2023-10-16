@@ -1,0 +1,51 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom,  rgb(147, 233, 204),#2980b9);
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+     border: 2px solid rgb(75, 133, 143)
+}
+
+h1 {
+    text-align: center;
+}
+
+.numbers-list {
+    margin-top: 20px;
+    /* border: 2px solid red */
+}
+
+.number-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    transition: border-color 0.3s;
+    /* border: 2px solid red  */
+}
+.number-item:hover {
+    border-color: #007bff; /* Change the border color on hover */
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.call-button, .remark-button {
+    cursor: pointer;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+.call-button:hover, .remark-button:hover{
+    border-color: #c6d7e9;
+}
+.remark-input {
+    width: 70%;
+}

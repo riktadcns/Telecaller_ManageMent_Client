@@ -1,0 +1,80 @@
+/* NumberEntry.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to bottom,  rgb(147, 233, 204),#2980b9);
+}
+
+.entry-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 145px;
+    background: linear-gradient(to bottom,  rgb(147, 233, 204),#2980b9);
+    border: 1px solid #adeef1;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    justify-content: center;
+    
+    
+}
+
+h2 {
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.input-group {
+    flex: 1;
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.phone-input {
+    display: flex;
+    align-items: center;
+}
+
+select, input[type="tel"], textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+#entry-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+#entry-button:hover {
+    background-color: #0056b3;
+}
+
+#entry-result {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #007bff;
+}

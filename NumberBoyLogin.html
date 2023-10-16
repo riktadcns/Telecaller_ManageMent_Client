@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NumberBoy Login Page</title>
+    <link rel="stylesheet" type="text/css" href="NumberBoyLogin.css">
+</head>
+<body>
+    <div class="login-container">
+        <h2>Number Boy Login</h2>
+        <form id="login-form">
+            <input type="text" id="userName" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button type="submit" id="login-button">Login</button>
+        </form>
+        <div id="login-result"></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    const loginForm = document.getElementById("login-form");
+    const userNameInput = document.getElementById("userName");
+    const passwordInput = document.getElementById("password");
+    const loginButton = document.getElementById("login-button");
+    const loginResult = document.getElementById("login-result");
+
+    loginForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const userName = userNameInput.value;
+        const password = passwordInput.value;
+
+        try {
+            const response = await fetch("/api/numberBoy-login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ userName, password }),
+            });
+
+            if (response.status === 200) {
+    const data = await response.json();
+    loginResult.textContent = "Login Successful. Token: " + data.accessToken;
+    window.location.href = "NumberEntry.html";
+} else if (response.status === 404) {
+    loginResult.textContent = "Invalid Access Token or NumberBoy";
+} else {
+    loginResult.textContent = "Error: " + response.statusText;
+}
+
+        } catch (error) {
+            console.error(error);
+            loginResult.textContent = "An error occurred.";
+        }
+    });
+});
+
+    </script>
+</body>
+</html>

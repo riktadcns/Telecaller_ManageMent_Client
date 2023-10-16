@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="TelecallerEntry.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Telecaller Dashboard</h1>
+        <div class="numbers-list">
+            <!-- Numbers will be added here dynamically -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            let userName = prompt('Please enter your username:'); // Always prompt the user
+
+            if (userName) {
+                sessionStorage.setItem('userName', userName); // Use sessionStorage consistently
+            } else {
+                alert('Username is required for this application to work.');
+                return;
+            }
+
+            // Fetch assigned numbers from the API
+            try {
+                const response = await fetch(`/api/telecaller/getAssignedNumbers/${userName}`);
+                const data = await response.json();
+
+                const numbersList = document.querySelector('.numbers-list');
+
+                if (Array.isArray(data.freshNewNum)) {
+                    for (const number of data.freshNewNum) {
+                        const numberItem = createNumberItem(number, 'New Numbers ');
+                        numbersList.appendChild(numberItem);
+                    }
+                }
+
+                if (Array.isArray(data.freshOldNum)) {
+                    for (const number of data.freshOldNum) {
+                        const numberItem = createNumberItem(number, 'Old Number');
+                        numbersList.appendChild(numberItem);
+                    }
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        });
+
+
+        function createNumberItem(number, type) {
+            const numberItem = document.createElement('div');
+            numberItem.classList.add('number-item');
+            numberItem.innerHTML = `
+                <div class="number-info">
+                    Number: ${number} (${type})
+                </div>
+                <div class "button-container">
+                    <button class="call-button" onclick="callNumber(this)">Call</button>
+                    <button class="remark-button" onclick="showRemarkModal(this, '${number}')">Add Remark</button>
+                </div>
+                <div class="remarks">
+                    <div class="call-time"></div>
+                    <div class="username"></div>
+                    <div class="remarks-text"></div>
+                </div>
+            `;
+            return numberItem;
+        }
+
+        function callNumber(button) {
+            const numberItem = button.closest('.number-item');
+            const callTimeElement = numberItem.querySelector('.call-time');
+            const callTime = new Date().toLocaleString(); // Get the current date and time
+            callTimeElement.textContent = `Call Time: ${callTime}`;
+        }
+
+        function showRemarkModal(button, number) {
+            const numberItem = button.closest('.number-item');
+            const remarkButton = numberItem.querySelector('.remark-button');
+            remarkButton.style.display = 'none'; // Hide the button
+            const remarksText = numberItem.querySelector('.remarks-text');
+            const username = sessionStorage.getItem('userName');
+            const remarkInput = document.createElement('input');
+            remarkInput.setAttribute('type', 'text');
+            remarkInput.setAttribute('placeholder', 'Add your remark');
+            const interestedInput = document.createElement('input');
+            interestedInput.setAttribute('type', 'checkbox');
+            interestedInput.setAttribute('id', 'interested');
+            interestedInput.setAttribute('name', 'interested');
+            interestedInput.setAttribute('value', 'interested');
+            const interestedLabel = document.createElement('label');
+            interestedLabel.textContent = 'Interested';
+            interestedLabel.setAttribute('for', 'interested');
+            const purchaseInput = document.createElement('input');
+            purchaseInput.setAttribute('type', 'checkbox');
+            purchaseInput.setAttribute('id', 'purchase');
+            purchaseInput.setAttribute('name', 'purchase');
+            purchaseInput.setAttribute('value', 'purchase');
+            const purchaseLabel = document.createElement('label');
+            purchaseLabel.textContent = 'Purchase';
+            purchaseLabel.setAttribute('for', 'purchase');
+            const saveButton = document.createElement('button');
+            saveButton.textContent = 'Save';
+            saveButton.onclick = function () {
+                const remark = remarkInput.value;
+                const isInterested = interestedInput.checked;
+                const purchase = purchaseInput.checked;
+                if (remark) {
+                    updateCallWithRemark(numberItem, number, username, remark, isInterested, purchase);
+                }
+            };
+            numberItem.appendChild(remarkInput);
+            numberItem.appendChild(interestedInput);
+            numberItem.appendChild(interestedLabel);
+            numberItem.appendChild(purchaseInput);
+            numberItem.appendChild(purchaseLabel);
+            numberItem.appendChild(saveButton);
+        }
+
+        async function updateCallWithRemark(numberItem, number, username, remark, isInterested, purchase) {
+            const remarksText = numberItem.querySelector('.remarks-text');
+            remarksText.textContent = `Remarks: ${remark}, Interested: ${isInterested ? 'Yes' : 'No'}, Purchase: ${purchase ? 'Yes' : 'No'}`;
+            const remarkButton = numberItem.querySelector('.remark-button');
+            remarkButton.style.display = 'block'; // Show the button again
+
+            // Prepare data for the POST request
+            const data = {
+                telecallerUserName: username,
+                isInterested,
+                purchase,
+                remarks: remark,
+                phoneNumber: number,
+            };
+
+            try {
+                const response = await fetch('/api/updateNumberAfterCall', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                if (response.status === 200) {
+                    const result = await response.json();
+                    console.log(result); // Log the response from the server
+                } else if (response.status === 404) {
+                    const errorData = await response.json();
+                    console.error(errorData); // Log the error response from the server
+                    alert(`Error: ${errorData.message}`);
+                }
+            } catch (error) {
+                console.error(error);
+                alert('An error occurred while updating the call.');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Number Entry Form</title>
+    <link rel="stylesheet" type="text/css" href="NumberEntry.css">
+</head>
+<body>
+    <div class="entry-container">
+        <h2>Number Entry</h2>
+        <form id="entry-form">
+            <div class="input-group">
+                <label for="freshNewNum">Fresh New Number:</label>
+                <div class="phone-input">
+                    <select id="country-code" required>
+                        <option value="91">+91 (India)</option>
+                        <option value="1">+1 (United States)</option>
+                        <option value="44">+44 (United Kingdom)</option>
+                        <option value="49">+49 (Germany)</option>
+                        <!-- Add more options for other countries if needed -->
+                    </select>
+                    <input type="tel" id="freshNewNum" placeholder="Enter Phone Number" required>
+                </div>
+                <label for="remarksNew">Remarks for Fresh New Number:</label>
+                <textarea id="remarksNew" placeholder="Enter Remarks for Fresh New Number" required></textarea>
+            </div>
+            <!-- <div class="input-group">
+                <label for="freshNewNum">Fresh New Number (with country code):</label>
+                <div class="phone-input">
+                    <select id="country-code" required>
+                        <option value="91">+91 (India)</option>
+                        <option value="1">+1 (United States)</option>
+                        <option value="44">+44 (United Kingdom)</option>
+                        <option value="49">+49 (Germany)</option>
+                        Add more countries as needed -->
+                    <!-- </select>
+                    <input type="tel" id="freshNewNum" placeholder="Enter Phone Number" required>
+                </div>
+                <label for="remarksNew">Remarks for Fresh New Number:</label>
+                <textarea id="remarksNew" placeholder="Enter Remarks for Fresh New Number" required></textarea>
+            </div> --> 
+            <div class="input-group">
+                <label for="freshOldNum">Fresh Old Number:</label>
+                <div class="phone-input">
+                    <select id="country-code-old" required>
+                        <option value="91">+91 (India)</option>
+                        <option value="1">+1 (United States)</option>
+                        <option value="44">+44 (United Kingdom)</option>
+                        <option value="49">+49 (Germany)</option>
+                        <!-- Add more countries as needed -->
+                    </select>
+                    <input type="tel" id="freshOldNum" placeholder="Enter Phone Number" required>
+                </div>
+                <label for="remarksOld">Remarks for Fresh Old Number:</label>
+                <textarea id="remarksOld" placeholder="Enter Remarks for Fresh Old Number" required></textarea>
+            </div>
+            
+            <button type="submit" id="entry-button">Create Number</button>
+        </form>
+        <div id="entry-result"></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    const entryForm = document.getElementById("entry-form");
+    const freshNewNumInput = document.getElementById("freshNewNum");
+    const freshOldNumInput = document.getElementById("freshOldNum");
+    const remarksNewInput = document.getElementById("remarksNew");
+    const remarksOldInput = document.getElementById("remarksOld");
+    const entryButton = document.getElementById("entry-button");
+    const entryResult = document.getElementById("entry-result");
+    const countryCodeInput = document.getElementById("country-code");
+    const countryCodeOldInput = document.getElementById("country-code-old");
+
+    // A set to keep track of unique numbers
+    const uniqueNumbers = new Set();
+
+    entryForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const countryCode = countryCodeInput.value;
+        const freshNewNum = freshNewNumInput.value;
+        const remarksNew = remarksNewInput.value;
+
+        const countryCodeOld = countryCodeOldInput.value;
+        const freshOldNum = freshOldNumInput.value;
+        const remarksOld = remarksOldInput.value;
+
+        const dataToSend = {
+            freshNewNum: countryCode + freshNewNum,
+            freshOldNum: countryCodeOld + freshOldNum,
+            remarksNew,
+            remarksOld,
+        };
+
+        // Check if the number is already in the set
+        if (uniqueNumbers.has(dataToSend.freshNewNum + dataToSend.freshOldNum)) {
+            entryResult.textContent = "Error: This number combination already exists.";
+            return;
+        }
+
+        try {
+            const response = await fetch("/api/Number", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(dataToSend),
+            });
+
+            if (response.status === 200) {
+                // Add the number to the set
+                uniqueNumbers.add(dataToSend.freshNewNum + dataToSend.freshOldNum);
+                entryResult.textContent = "Number Entry Successful";
+            } else {
+                const data = await response.json();
+                entryResult.textContent = "Error: " + data.message;
+            }
+        } catch (error) {
+            console.error(error);
+            entryResult.textContent = "An error occurred.";
+        }
+    });
+});
+
+    </script>
+    </body>
+</html>

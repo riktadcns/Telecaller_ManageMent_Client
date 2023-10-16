@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="adminLogin.css">
+</head>
+<body>
+    <div class="login-page" id="loginPage">
+        <div class="top-buttons">
+          <button class="top-button"><a href="NumberBoyLogin.html">NumberBoy</a></button>
+          <button class="top-button"><a href="TelecallerLogin.html">Telecaller</a></button>
+        </div>
+        <h2>Admin Login</h2>
+        <input type="text" id="userName" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+    
+    
+      </div>
+      <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+       
+      document.getElementById("adminLoginButton").addEventListener("click", login);
+      document.getElementById("numberBoyLoginButton").addEventListener("click", numberBoyLogin);
+      document.getElementById("createNumberEntryButton").addEventListener("click", createNumberEntry);
+
+
+
+        document.getElementById("adminLogin").addEventListener("click", login);
+        });
+          async function login() {
+        const userName = document.getElementById("userName").value;
+        const password = document.getElementById("password").value;
+  
+        if (!userName || !password) {
+          alert("Username and password are required.");
+          return;
+        }
+  
+        try {
+          const response = await fetch("/api/admin-login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ userName, password }),
+          });
+  
+          if (response.status === 200) {
+            const data = await response.json();
+            const authToken = data.token.accessToken;      
+            localStorage.setItem("authToken", authToken);
+            window.location.href = "adminPanel.html";
+          } else {
+            alert("Invalid username or password");
+          }
+        } catch (error) {
+          console.error(error);
+          alert("Failed to connect to the server");
+        }
+      }
+      </script>
+    
+</body>
+</html>

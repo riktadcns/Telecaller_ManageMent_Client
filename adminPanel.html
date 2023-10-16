@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="adminPanel.css">
+  <title>Admin Panel</title>
+</head>
+<body>
+  <div class="welcome-page" id="welcomePage" s>
+
+    <div class="sidebar" id="mySidebar">
+      <ul>
+        <li><a href="#" onclick="w3_close()">Close &times;</a></li>
+        <li><a href="#" onclick="showDashboard()">Dashboard</a></li>
+        <li>
+          <a href="#" onclick="toggleDropdown('createDropdown')">Create</a>
+          <ul class="dropdown" id="createDropdown">
+            <li><a href="#" onclick="showSubAdminForm()">Sub Admin</a></li>
+            <li><a href="#" onclick="showNumberBoyForm()">Number Boy</a></li>
+            <li><a href="#" onclick="showTelecallerForm()">Telecaller</a></li>
+          </ul>
+        </li>
+      <!-- Inside the sidebar, add a new menu item for the profile dropdown -->
+<li>
+  <a href="#" onclick="showProfileDropdown()">Profile</a>
+  <ul class="dropdown" id="profileDropdown" style="display: none;">
+    <li><a href="subadminEdit.html" onclick="showUsers('subAdmin')">Sub Admins</a></li>
+    <li><a href="numberBoyEdit.html" onclick="showUsers('numberBoy')">Number Boys</a></li>
+    <li><a href="telecallerEdit.html" onclick="showUsers('telecaller')">Telecallers</a></li>
+  </ul>
+</li>
+
+
+
+        <li><a href="#" id="allNumbersLink" onclick="showAllNumbers()">All Numbers</a></li>
+        
+
+        <li><a href="selectNumTele.html" onclick="showAssignNumbersSection()">Assign Numbers</a></li>
+        <!-- Add more menu items as needed -->
+
+        <li><a href="assignNumber.html">Numbers After Assign</a></li>
+        <li><a href="updatenumber.html">Update Numbers</a></li>
+      </ul>
+    </div>
+    <div id="content" class="content">
+      <div id="profileContent" style="display: none;"></div>
+    </div>
+    <button onclick="w3_open()" class="open-button"> &#9776;</button>
+  </div>
+  
+  <div id="registrationContainer" style="display: none;">
+    <div class="sub-admin-registration" id="subAdminRegistration">
+      <h2>Sub Admin Registration Form</h2>
+      <input type="text" id="subAdminUsername" placeholder="Username">
+      <input type="password" id ="subAdminPassword" placeholder="Password">
+      <button id="createSubAdminBtn" onclick="createSubAdmin()">Create Sub Admin</button>
+    </div>
+    <div class="number-boy-registration" id="numberBoyRegistration">
+      <h2>Number Boy Registration Form</h2>
+      <input type="text" id="numberBoyUsername" placeholder="Username">
+      <input type="password" id="numberBoyPassword" placeholder="Password">
+      <button id="createNumberBoyBtn" onclick="createNumberBoy()">Create Number Boy</button>
+    </div>
+    <div class="telecaller-registration" id="telecallerRegistration">
+      <h2>Telecaller Registration Form</h2>
+      <input type="text" id="telecallerUsername" placeholder="Username">
+      <input type="password" id="telecallerPassword" placeholder="Password">
+      <button id="createTelecallerBtn" onclick="createTelecaller()">Create Telecaller</button>
+    </div>
+  </div>
+  <div class="center-container">
+    <div id="numbersContent" style="display: none;"></div>
+  </div>
+
+
+  <script>
+    function w3_open() {
+      document.getElementById("mySidebar").style.width = "250px";
+      document.getElementById("content").style.marginLeft = "250px";
+      document.querySelector("button[onclick='w3_open']").style.display = "none"; 
+    }
+
+    function w3_close() {
+      document.getElementById("mySidebar").style.width = "0";
+      document.getElementById("content").style.marginLeft = "0";
+      document.querySelector("button[onclick='w3_open']").style.display = "block"; 
+    }
+
+   
+    // function showAssignNumbersSection() {
+    //   document.getElementById("assignNumbersSection").style.display = "block";
+    // }
+
+    // function hideAssignNumbersSection() {
+    //   document.getElementById("assignNumbersSection").style.display = "none";
+    // }
+
+    function toggleDisplay(elementId, displayStyle) {
+      const element = document.getElementById(elementId);
+      element.style.display = displayStyle;
+    }
+
+    function clearInputFields(...inputIds) {
+      for (const inputId of inputIds) {
+        document.getElementById(inputId).value = '';
+      }
+    }
+  </script>
+
+  <script src="adminPanel.js"></script>
+</body>
+</html>

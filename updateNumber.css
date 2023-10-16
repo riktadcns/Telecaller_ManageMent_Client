@@ -1,0 +1,61 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom,  rgb(147, 233, 204),#2980b9);
+
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}   
+
+h1 {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    margin: 0;
+}
+
+#telecaller-list {
+    margin: 20px;
+    padding: 20px;
+    background-color: #cde7ee;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.telecaller-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border: 1px solid #dac7c7;
+    background-color: #fff;
+}
+
+.assigned-numbers-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.numbers-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.call-history-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #333;
+    color: #fff;
+}
+
+tr:nth-child(even) {
+    background-color: #c3e2db;
+}

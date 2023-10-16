@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assignNumber.css">
+    <title>Assigned Telecaller Numbers</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Assigned Telecaller Numbers</h1>
+        <div id="assignedNumbers"></div>
+    </div>
+
+    <script >
+
+document.addEventListener("DOMContentLoaded", function () {
+    const authToken = localStorage.getItem("authToken");
+        if (!authToken) {
+          alert("Authentication token is missing. Please log in again.");
+          return;
+        }
+    fetch("/api/admin/assigned-telecaller-numbers", {
+        headers: {
+            Authorization: `Bearer ${authToken}`,
+            
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Handle the response data
+        const assignedNumbersContainer = document.getElementById("assignedNumbers");
+        assignedNumbersContainer.innerHTML = "";
+
+        data.forEach(telecaller => {
+            const telecallerDiv = document.createElement("div");
+            telecallerDiv.innerHTML = `
+                <p><strong>User Name:</strong> ${telecaller.userName}</p>
+                <p><strong>Fresh New Numbers:</strong> ${telecaller.freshNewNum.join(", ")}</p>
+                <p><strong>Fresh Old Numbers:</strong> ${telecaller.freshOldNum.join(", ")}</p>
+                <hr>
+            `;
+            assignedNumbersContainer.appendChild(telecallerDiv);
+        });
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        const assignedNumbersContainer = document.getElementById("assignedNumbers");
+        assignedNumbersContainer.innerHTML = "<p>Error fetching data from the API.</p>";
+    });
+});
+
+
+    </script>
+</body>
+</html>

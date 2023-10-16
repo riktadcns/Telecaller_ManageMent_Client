@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telecaller List</title>
+    <link rel="stylesheet" href="updateNumber.css">
+</head>
+<body>
+    <h1>Telecaller List</h1>
+    <div id="telecaller-list">
+        <!-- Telecaller list will be displayed here -->
+    </div>
+</body>
+<script>
+ document.addEventListener("DOMContentLoaded", function () {
+    const authToken = localStorage.getItem("authToken");
+        if (!authToken) {
+          alert("Authentication token is missing. Please log in again.");
+          return;
+        }
+    
+fetch('/api/admin/view-Telecaller', {
+    method: 'GET',
+    headers: {
+        Authorization: `Bearer ${authToken}`,
+    }
+})
+.then(response => response.json())
+.then(data => {
+    const telecallerList = document.getElementById('telecaller-list');
+    data.forEach(telecaller => {
+        const telecallerInfo = document.createElement('div');
+        telecallerInfo.innerHTML = `
+            <table class="telecaller-table">
+                <tr>
+                    <th>Name</th>
+                    <td>${telecaller.userName}</td>
+                </tr>
+                <tr>
+                    <th>Assigned Numbers</th>
+                    <td>
+                        <table class="assigned-numbers-table">
+                            <tr>
+                                <th>New Numbers</th>
+                                <th>Old Numbers</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    ${telecaller.assignedNumbers[0].newNumbers.map(newNumber => `
+                                        <table class="numbers-table">
+                                            <tr>
+                                                <th>Fresh New Number</th>
+                                                <td>${newNumber.freshNewNum.join(', ')}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Call History</th>
+                                                <td>
+                                                    <table class="call-history-table">
+                                                        ${newNumber.callHistory.map(call => `
+                                                            <tr>
+                                                                <td>
+                                                                    <strong>Call Time:</strong> ${call.callTime}<br>
+                                                                    <strong>Is Interested:</strong> ${call.isInterested ? 'Yes' : 'No'}<br>
+                                                                    <strong>Purchase:</strong> ${call.purchase}<br>
+                                                                    <strong>Remarks:</strong> ${call.remarks}
+                                                                </td>
+                                                            </tr>
+                                                        `).join('')}
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    `).join('')}
+                                </td>
+                                <td>
+                                    ${telecaller.assignedNumbers[0].oldNumbers.map(oldNumber => `
+                                        <table class="numbers-table">
+                                            <tr>
+                                                <th>Fresh Old Number</th>
+                                                <td>${oldNumber.freshOldNum.join(', ')}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Call History</th>
+                                                <td>
+                                                    <table class="call-history-table">
+                                                        ${oldNumber.callHistory.map(call => `
+                                                            <tr>
+                                                                <td>
+                                                                    <strong>Call Time:</strong> ${call.callTime}<br>
+                                                                    <strong>Is Interested:</strong> ${call.isInterested ? 'Yes' : 'No'}<br>
+                                                                    <strong>Purchase:</strong> ${call.purchase}<br>
+                                                                    <strong>Remarks:</strong> ${call.remarks}
+                                                                </td>
+                                                            </tr>
+                                                        `).join('')}
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    `).join('')}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        `;
+        telecallerList.appendChild(telecallerInfo);
+    });
+})
+.catch(error => {
+    console.error('Error fetching data:', error);
+});
+ });
+</script>
+</html>

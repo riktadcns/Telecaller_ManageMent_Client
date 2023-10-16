@@ -1,0 +1,164 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Select Numbers and Send to Telecaller</title>
+        <link rel="stylesheet" href="selectNumTele.css">
+    </head>
+    <body>
+        <h1>Select Numbers</h1>
+        <form id="number-form">
+            <!-- Checkbox container -->
+            <div id="number-checkboxes"></div>
+        </form>
+
+        <h1>Select Telecaller</h1>
+        <select id="telecaller-select">
+            <option value="">Select a Telecaller</option>
+            <!-- Telecaller options will be populated here -->
+        </select>
+
+        <button type="button" id="assign-button">Assign</button>
+
+        <div id="message"></div>
+
+        <script >
+    document.addEventListener("DOMContentLoaded", () => {
+        let selectedNumber = null; // Store selected number as an object
+        let selectedTelecaller = null; // Store selected telecaller as an object
+
+        const numberCheckboxes = document.getElementById("number-checkboxes");
+        const telecallerSelect = document.getElementById("telecaller-select");
+        const assignButton = document.getElementById("assign-button");
+        const messageDiv = document.getElementById("message");
+
+        // Function to fetch and display numbers
+        async function populateNumberCheckboxes() {
+            const authToken = localStorage.getItem("authToken");
+            if (!authToken) {
+            alert("Authentication token is missing. Please log in again.");
+            return;
+            }
+            try {
+                const response = await fetch("/api/admin/Number-To-Assign", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${authToken}`,
+                    },
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    data.forEach(number => {
+                        const checkbox = document.createElement("label");
+                        checkbox.innerHTML = `
+                            <label>
+                                <input type="checkbox" name="number" value="${number.freshNewNum}-${number.freshOldNum}">
+                                Fresh New Number: ${number.freshNewNum} - Fresh Old Number: ${number.freshOldNum}
+                            </label>
+                        `;
+                        numberCheckboxes.appendChild(checkbox);
+                    });
+
+                    // Add event listener to checkboxes to update selectedNumber
+                    const checkboxes = document.querySelectorAll('input[name="number"]');
+                    checkboxes.forEach(checkbox => {
+                        checkbox.addEventListener("change", () => {
+                            if (checkbox.checked) {
+                                // Extract freshNewNum and freshOldNum from the selected number
+                                const [freshNewNum, freshOldNum] = checkbox.value.split('-');
+                                selectedNumber = { freshNewNum, freshOldNum };
+                            } else {
+                                selectedNumber = null;
+                            }
+                        });
+                    });
+                } else {
+                    console.error("Failed to fetch number data");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+
+        // Function to fetch and populate the telecaller select dropdown
+        async function populateTelecallerSelect() {
+            const authToken = localStorage.getItem("authToken");
+            if (!authToken) {
+            alert("Authentication token is missing. Please log in again.");
+            return;
+            }
+            try {
+                const response = await fetch("/api/admin/viewTelecaller-assign", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${authToken}`,
+                    },
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    data.forEach(telecaller => {
+                        const option = document.createElement("option");
+                        option.value = telecaller.userName;
+                        option.innerText = `User Name: ${telecaller.userName}`;
+                        telecallerSelect.appendChild(option);
+                    });
+
+                    // Add event listener to the select to update selectedTelecaller
+                    telecallerSelect.addEventListener("change", () => {
+                        selectedTelecaller = telecallerSelect.value;
+                    });
+                } else {
+                    console.error("Failed to fetch telecaller data");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+
+        // Function to handle the assignment
+        assignButton.addEventListener("click", async () => {
+            const authToken = localStorage.getItem("authToken");
+            if (!authToken) {
+            alert("Authentication token is missing. Please log in again.");
+            return;
+            }
+            if (selectedNumber && selectedTelecaller) {
+                try {
+                    // Send data to the server
+                    const response = await fetch("/api/admin/telecaller/send-selected-numbers", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${authToken}`,
+                        },
+                        body: JSON.stringify({ userName: selectedTelecaller, ...selectedNumber }),
+                    });
+
+                    if (response.ok) {
+                        // Handle success response here
+                        messageDiv.textContent = "Numbers assigned successfully";
+                    } else {
+                        // Handle error response here
+                        messageDiv.textContent = "Failed to assign numbers. Please try again.";
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                }
+            } else {
+                messageDiv.textContent = "Please select a Number and a Telecaller to assign.";
+            }
+        });
+
+        // Call the functions to populate the number checkboxes and telecaller select dropdown
+        populateNumberCheckboxes();
+        populateTelecallerSelect();
+    });
+
+    
+
+        </script>
+    </body>
+    </html>

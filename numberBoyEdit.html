@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NumberBoy Update</title>
+    <link rel="stylesheet" href="numberBoyEdit.css">
+</head>
+<body>
+    <h1>NumberBoy Update</h1>
+
+    <!-- Display NumberBoys -->
+    <div id="numberBoyList">
+        <h2>NumberBoys</h2>
+        <ul id="numberBoys"></ul>
+    </div>
+
+    <!-- Edit NumberBoy Form -->
+    <div id="editNumberBoy">
+        <h2>Edit NumberBoy</h2>
+        <form id="editForm">
+            <input type="hidden" id="editNumberBoyId">
+            <input type="text" id="editUsername" placeholder="Username">
+            <input type="password" id="editPassword" placeholder="New Password">
+            <button id="updateButton">Update</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            // Retrieve user ID from localStorage
+            const numberBoyId = localStorage.getItem("numberBoyId");
+
+            let authToken = localStorage.getItem("authToken");
+            if (!authToken) {
+                alert("Authentication token is missing. Please log in again.");
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/admin/view-NumberBoy", {
+                    headers: {
+                        Authorization: `Bearer ${authToken}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(`Error: ${errorData.message}`);
+                    return;
+                }
+
+                const numberBoys = await response.json();
+                const numberBoyList = document.getElementById("numberBoys");
+
+                numberBoys.forEach(numberBoy => {
+                    const listItem = document.createElement("li");
+                    listItem.textContent = numberBoy.userName;
+                    const editButton = document.createElement("button");
+                    editButton.textContent = "Edit";
+                    editButton.addEventListener("click", () => {
+                        showEditForm(numberBoy._id, numberBoy.userName);
+                    });
+
+                    listItem.appendChild(editButton);
+                    numberBoyList.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error(error);
+            }
+
+            const updateButton = document.getElementById("updateButton");
+            updateButton.addEventListener("click", async () => {
+                authToken = localStorage.getItem("authToken");
+                const numberBoyId = document.getElementById("editNumberBoyId").value;
+                const newUsername = document.getElementById("editUsername").value;
+                const newPassword = document.getElementById("editPassword").value;
+
+                const updatedData = {
+                    userName: newUsername,
+                    password: newPassword,
+                };
+
+                const response = await fetch(`/api/admin/update-numberboy/${numberBoyId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${authToken}`,
+                    },
+                    body: JSON.stringify(updatedData),
+                });
+
+                if (response.ok) {
+                    alert("NumberBoy updated successfully.");
+                } else {
+                    const errorData = await response.json();
+                    alert(`Error: ${errorData.message}`);
+                }
+            });
+        });
+
+        function showEditForm(numberBoyId, currentUsername) {
+            const editNumberBoy = document.getElementById("editNumberBoy");
+            const editNumberBoyId = document.getElementById("editNumberBoyId");
+            const editUsername = document.getElementById("editUsername");
+
+            editNumberBoy.style.display = "block";
+            editNumberBoyId.value = numberBoyId;
+            editUsername.value = currentUsername;
+        }
+    </script>
+</body>
+</html>

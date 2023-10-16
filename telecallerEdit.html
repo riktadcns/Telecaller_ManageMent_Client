@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Telecaller Update</title>
+    <link rel="stylesheet" href="telecallerEdit.css">
+</head>
+<body>
+    <h1>Telecaller Update</h1>
+<div id="telecallerList">
+    <h2>Telecallers</h2>
+    <ul id="telecallers"></ul>
+</div>
+<div id="editTelecaller">
+    <h2>Edit Telecaller</h2>
+    <form id="editForm">
+        <input type="hidden" id="editTelecallerId">
+        <input type="text" id="editUsername" placeholder="Username">
+        <input type="password" id="editPassword" placeholder="New Password">
+        <button id="updateButton">Update</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", async () => { 
+        const telecallerId = localStorage.getItem("telecallerId");
+
+        let authToken = localStorage.getItem("authToken");
+        if (!authToken) {
+            alert("Authentication token is missing. Please log in again.");
+            return;
+        }
+            try {
+                const response = await fetch("/api/admin/view-Telecaller", {
+                    headers: {
+                        Authorization: `Bearer ${authToken}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(`Error: ${errorData.message}`);
+                    return;
+                }
+
+                const telecallers = await response.json();
+                const telecallerList = document.getElementById("telecallers");
+
+                telecallers.forEach(telecaller => {
+                    const listItem = document.createElement("li");
+                    listItem.textContent = telecaller.userName;
+                    const editButton = document.createElement("button");
+                    editButton.textContent = "Edit";
+                    editButton.addEventListener("click", () => {
+                        showEditForm(telecaller._id, telecaller.userName);
+                    });
+
+                    listItem.appendChild(editButton);
+                    telecallerList.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error(error);
+            }
+
+            const updateButton = document.getElementById("updateButton");
+            updateButton.addEventListener("click", async () => {
+                authToken = localStorage.getItem("authToken"); 
+                const telecallerId = document.getElementById("editTelecallerId").value;
+                const newUsername = document.getElementById("editUsername").value;
+                const newPassword = document.getElementById("editPassword").value;
+
+                const updatedData = {
+                    userName: newUsername,
+                    password: newPassword,
+                };
+              
+                const response = await fetch(`/api/admin/update-telecaller/${telecallerId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${authToken}`,
+                    },
+                    body: JSON.stringify(updatedData),
+                });
+
+                if (response.ok) {
+                    alert("Telecaller updated successfully.");
+                } else {
+                    const errorData = await response.json();
+                    alert(`Error: ${errorData.message}`);
+                }
+            });
+        });
+
+        function showEditForm(telecallerId, currentUsername) {
+           
+            const editTelecaller = document.getElementById("editTelecaller");
+            const editTelecallerId = document.getElementById("editTelecallerId");
+            const editUsername = document.getElementById("editUsername");
+
+            editTelecaller.style.display = "block";
+            editTelecallerId.value = telecallerId;
+            editUsername.value = currentUsername;
+        }
+    </script>
+</body>
+</html>

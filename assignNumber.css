@@ -1,0 +1,19 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom,  rgb(147, 233, 204),#2980b9);
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 24px;
+}
+
+#assignedNumbers {
+    text-align: left;
+}
